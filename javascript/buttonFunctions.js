@@ -1,4 +1,4 @@
-import { createAlertModal, createNewCommentForm, createComment, createReplyContainer, createEditCommentButton } from "/javascript/createElement.js"
+import { createAlertModal, createNewCommentForm, createComment, createReplyContainer, createEditCommentButton } from "/Interactive-comment-section/javascript/createElement.js"
 
 let currentReplyForm = null
 
@@ -22,8 +22,8 @@ export function replyToComment(e) {
         currentReplyForm.remove()
     }
 
-    fetch("/tailwindclasses.json").then((response) => response.json()).then((classJsonData) => {
-        fetch("/data.json").then((response) => response.json()).then((commentJsonData) => {
+    fetch("/Interactive-comment-section/tailwindclasses.json").then((response) => response.json()).then((classJsonData) => {
+        fetch("/Interactive-comment-section/data.json").then((response) => response.json()).then((commentJsonData) => {
             currentReplyForm = createNewCommentForm(classJsonData, commentJsonData["currentUser"], true)
             comment.after(currentReplyForm)
         })
@@ -41,7 +41,7 @@ export function editComment(e) {
     let textareaField = document.createElement("textarea")
     currentComment.classList.toggle("being-edited")
 
-    fetch("/tailwindclasses.json").then((response) => response.json()).then((classJsonData) => {
+    fetch("/Interactive-comment-section/tailwindclasses.json").then((response) => response.json()).then((classJsonData) => {
         classJsonData["textarea"]["edit comment textarea field"].split(" ").forEach((item) => {
             textareaField.classList.add(item)
         })
@@ -88,7 +88,7 @@ export function updateComment(e) {
 
 export function deleteCommentAlert(e) {
     let currentComment = e.currentTarget.closest(".comment-container")
-    fetch("/tailwindclasses.json").then((response) => response.json()).then((classJsonData) => {
+    fetch("/Interactive-comment-section/tailwindclasses.json").then((response) => response.json()).then((classJsonData) => {
         createAlertModal(classJsonData, currentComment)
     })
 }
@@ -112,7 +112,7 @@ export function addNewComment(e, reply = false) {
             "username": newCommentForm.getAttribute("username")
     }
     
-    fetch("/tailwindclasses.json").then((response) => response.json()).then((classJsonData) => {
+    fetch("/Interactive-comment-section/tailwindclasses.json").then((response) => response.json()).then((classJsonData) => {
         let newCommentContent = getNewCommentContent(newCommentForm)
 
         if(newCommentContent === "")

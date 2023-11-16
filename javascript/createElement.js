@@ -4,8 +4,8 @@ const deleteImagePath = "/images/icon-delete.svg"
 const editImagePath = "/images/icon-edit.svg"
 const replyImagePath = "/images/icon-reply.svg"
 
-import * as buttonFunctions from "/javascript/buttonFunctions.js"
-import { layoutShift } from "/javascript/layoutShift.js"
+import * as buttonFunctions from "/Interactive-comment-section/javascript/buttonFunctions.js"
+import { layoutShift } from "/Interactive-comment-section/javascript/layoutShift.js"
 
 // Create a new comment
 export function createComment(designClasses, commentData, currentUser, reply = false) {

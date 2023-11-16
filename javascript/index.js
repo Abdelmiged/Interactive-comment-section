@@ -1,12 +1,12 @@
-import { createComment, createReplyContainer, createNewCommentForm } from '/javascript/createElement.js'
-import { layoutShift } from '/javascript/layoutShift.js'
+import { createComment, createReplyContainer, createNewCommentForm } from '/Interactive-comment-section/javascript/createElement.js'
+import { layoutShift } from '/Interactive-comment-section/javascript/layoutShift.js'
 
 window.onload = loadCommentsAndForms
 
 function loadCommentsAndForms() {
-    fetch("/tailwindclasses.json").then((response) => response.json()).then(
+    fetch("/Interactive-comment-section/tailwindclasses.json").then((response) => response.json()).then(
         (classJsonData) => {
-            fetch("/data.json").then((response) => response.json()).then((commentJsonData) => {
+            fetch("/Interactive-comment-section/data.json").then((response) => response.json()).then((commentJsonData) => {
                 loadComments(classJsonData, commentJsonData["comments"], commentJsonData["currentUser"])
                 loadNewCommentForm(classJsonData, commentJsonData["currentUser"])
             })
