@@ -1,8 +1,8 @@
-const upvoteImagePath = "/images/icon-plus.svg"
-const downvoteImagePath = "/images/icon-minus.svg"
-const deleteImagePath = "/images/icon-delete.svg"
-const editImagePath = "/images/icon-edit.svg"
-const replyImagePath = "/images/icon-reply.svg"
+const upvoteImagePath = "/Interactive-comment-section/images/icon-plus.svg"
+const downvoteImagePath = "/Interactive-comment-section/images/icon-minus.svg"
+const deleteImagePath = "/Interactive-comment-section/images/icon-delete.svg"
+const editImagePath = "/Interactive-comment-section/images/icon-edit.svg"
+const replyImagePath = "/Interactive-comment-section/images/icon-reply.svg"
 
 import * as buttonFunctions from "/Interactive-comment-section/javascript/buttonFunctions.js"
 import { layoutShift } from "/Interactive-comment-section/javascript/layoutShift.js"
