@@ -10,9 +10,9 @@ export function decreaseVoteCount(e) {
     e.currentTarget.previousElementSibling.textContent = parseInt(e.currentTarget.previousElementSibling.textContent) - 1
 }
 
-export function replyToComment(e) {
+export async function replyToComment(e) {
     let comment = e.currentTarget.closest(".comment-container")
-
+    
     if(currentReplyForm === comment.nextElementSibling) {
         currentReplyForm.remove()
         return
@@ -22,15 +22,14 @@ export function replyToComment(e) {
         currentReplyForm.remove()
     }
 
-    fetch("/Interactive-comment-section/tailwindclasses.json").then((response) => response.json()).then((classJsonData) => {
-        fetch("/Interactive-comment-section/data.json").then((response) => response.json()).then((commentJsonData) => {
-            currentReplyForm = createNewCommentForm(classJsonData, commentJsonData["currentUser"], true)
-            comment.after(currentReplyForm)
-        })
-    })
+    let classJsonData = await (await fetch("/Interactive-comment-section/tailwindclasses.json")).json();
+    let commentJsonData = await (await fetch("/Interactive-comment-section/data.json")).json();
+
+    currentReplyForm = createNewCommentForm(classJsonData, commentJsonData["currentUser"], true);
+    comment.after(currentReplyForm);
 }
 
-export function editComment(e) {
+export async function editComment(e) {
     let currentComment = e.currentTarget.closest(".comment-container")
 
     if(currentComment.classList.contains("being-edited"))
@@ -41,22 +40,22 @@ export function editComment(e) {
     let textareaField = document.createElement("textarea")
     currentComment.classList.toggle("being-edited")
 
-    fetch("/Interactive-comment-section/tailwindclasses.json").then((response) => response.json()).then((classJsonData) => {
-        classJsonData["textarea"]["edit comment textarea field"].split(" ").forEach((item) => {
-            textareaField.classList.add(item)
-        })
-        textareaField.style.minHeight = getComputedStyle(commentContent).height
-        textareaField.textContent = (replyTo) ? replyTo.nextSibling.nodeValue : commentContent.textContent
-        
-        commentContent.after(textareaField)
-        commentContent.style.display = "none"
+    let classJsonData = await (await fetch("/Interactive-comment-section/tailwindclasses.json")).json();
 
-        let editCommentButtonContainer = createEditCommentButton(classJsonData)
-
-        let commentWrapper = currentComment.querySelector(".wrapper")
-
-        commentWrapper.appendChild(editCommentButtonContainer)
+    classJsonData["textarea"]["edit comment textarea field"].split(" ").forEach((item) => {
+        textareaField.classList.add(item)
     })
+    textareaField.style.minHeight = getComputedStyle(commentContent).height
+    textareaField.textContent = (replyTo) ? replyTo.nextSibling.nodeValue : commentContent.textContent
+    
+    commentContent.after(textareaField)
+    commentContent.style.display = "none"
+
+    let editCommentButtonContainer = createEditCommentButton(classJsonData)
+
+    let commentWrapper = currentComment.querySelector(".wrapper")
+
+    commentWrapper.appendChild(editCommentButtonContainer)
 }
 
 export function updateComment(e) {
@@ -102,7 +101,7 @@ export function deleteComment(e, currentComment) {
     e.currentTarget.closest(".modal-overlay").remove()
 }
 
-export function addNewComment(e, reply = false) {
+export async function addNewComment(e, reply = false) {
     e.preventDefault()
     let newCommentForm = e.currentTarget.closest(".new-comment")
     let currentUser = {
@@ -112,44 +111,44 @@ export function addNewComment(e, reply = false) {
             "username": newCommentForm.getAttribute("username")
     }
     
-    fetch("/Interactive-comment-section/tailwindclasses.json").then((response) => response.json()).then((classJsonData) => {
-        let newCommentContent = getNewCommentContent(newCommentForm)
+    let classJsonData = await (await fetch("/Interactive-comment-section/tailwindclasses.json")).json();
 
-        if(newCommentContent === "")
-            return
+    let newCommentContent = getNewCommentContent(newCommentForm)
 
-        let randID = Math.floor((Math.random() * Number.MAX_SAFE_INTEGER) + 1)
-        let commentData = {
-            "id": randID,
-            "content": newCommentContent,
-            "createdAt": "just now",
-            "score": 0,
-            "user": currentUser,
-            "replies": []
-        }
+    if(newCommentContent === "")
+        return
 
-        if(!reply) {
-            let newComment = createComment(classJsonData, commentData, currentUser)
-            newCommentForm.before(newComment)
+    let randID = Math.floor((Math.random() * Number.MAX_SAFE_INTEGER) + 1)
+    let commentData = {
+        "id": randID,
+        "content": newCommentContent,
+        "createdAt": "just now",
+        "score": 0,
+        "user": currentUser,
+        "replies": []
+    }
+
+    if(!reply) {
+        let newComment = createComment(classJsonData, commentData, currentUser)
+        newCommentForm.before(newComment)
+    }
+    else {
+        let replyingTo = newCommentForm.previousElementSibling.querySelector(".username").textContent
+        commentData["replyingTo"] = replyingTo
+
+        let newComment = createComment(classJsonData, commentData, currentUser, true)
+
+        if(newCommentForm.nextElementSibling.classList.contains("replies-outer-wrapper")) {
+            newCommentForm.nextElementSibling.querySelector(".replies-inner-wrapper").appendChild(newComment)
+            newCommentForm.remove()
         }
         else {
-            let replyingTo = newCommentForm.previousElementSibling.querySelector(".username").textContent
-            commentData["replyingTo"] = replyingTo
-
-            let newComment = createComment(classJsonData, commentData, currentUser, true)
-
-            if(newCommentForm.nextElementSibling.classList.contains("replies-outer-wrapper")) {
-                newCommentForm.nextElementSibling.querySelector(".replies-inner-wrapper").appendChild(newComment)
-                newCommentForm.remove()
-            }
-            else {
-                let repliesContainer = createReplyContainer(classJsonData)
-                repliesContainer.querySelector(".replies-inner-wrapper").appendChild(newComment)
-                newCommentForm.after(repliesContainer)
-                newCommentForm.remove()
-            }
+            let repliesContainer = createReplyContainer(classJsonData)
+            repliesContainer.querySelector(".replies-inner-wrapper").appendChild(newComment)
+            newCommentForm.after(repliesContainer)
+            newCommentForm.remove()
         }
-    })
+    }
 }
 
 function getNewCommentContent(newCommentForm) {

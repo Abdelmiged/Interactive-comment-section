@@ -3,15 +3,12 @@ import { layoutShift } from '/Interactive-comment-section/javascript/layoutShift
 
 window.onload = loadCommentsAndForms
 
-function loadCommentsAndForms() {
-    fetch("/Interactive-comment-section/tailwindclasses.json").then((response) => response.json()).then(
-        (classJsonData) => {
-            fetch("/Interactive-comment-section/data.json").then((response) => response.json()).then((commentJsonData) => {
-                loadComments(classJsonData, commentJsonData["comments"], commentJsonData["currentUser"])
-                loadNewCommentForm(classJsonData, commentJsonData["currentUser"])
-            })
-        }
-    )
+async function loadCommentsAndForms() {
+    let classJsonData = await (await fetch("/Interactive-comment-section/tailwindclasses.json")).json();
+    let commentJsonData = await (await fetch("/Interactive-comment-section/data.json")).json();
+    
+    loadComments(classJsonData, commentJsonData["comments"], commentJsonData["currentUser"]);
+    loadNewCommentForm(classJsonData, commentJsonData["currentUser"]);
 }
 
 function loadComments(designClasses, commentJsonData, currentUser) {

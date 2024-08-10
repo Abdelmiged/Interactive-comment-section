@@ -151,6 +151,7 @@ export function createAlertModal(designClasses, currentComment) {
     appendModalButtonFunctions(modalOverlay, currentComment)
 
     document.body.prepend(modalOverlay)
+    modalOverlay.scrollIntoView({block: "center", inline: "nearest"});
 }
 
 function appendModalButtonFunctions(modal, currentComment) {
